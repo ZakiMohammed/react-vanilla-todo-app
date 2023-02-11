@@ -1,24 +1,16 @@
-import { useContext } from 'react'
 import { FaTimes, FaPencilAlt } from 'react-icons/fa';
 import Button from '../shared/Button'
-import TaskContext from '../../context/task/TaskContext';
-import TaskConstants from '../../context/task/TaskConstants';
-import TaskActions from '../../context/task/TaskActions';
-import SpinnerContext from '../../context/spinner/SpinnerContext';
+import TaskService from '../../services/task/TaskService';
 import Card from '../shared/Card';
 
-const TaskItem = ({ task }) => {
-
-    const { setLoading } = useContext(SpinnerContext)
-    const { dispatch } = useContext(TaskContext)
-
+const TaskItem = ({ task, remove, setSingleTask, setLoading }) => {
     const handleRemoveTask = async (e) => {
         try {
             setLoading(true)
 
-            await TaskActions.remove(task._id)
+            await TaskService.remove(task._id)
 
-            dispatch({ type: TaskConstants.REMOVE, payload: task })
+            remove(task._id);
 
         } catch (error) {
             window.alert(`Error Occurred: ${error.message}`)
@@ -27,7 +19,7 @@ const TaskItem = ({ task }) => {
         }
     }
     const handleEditTask = (e) => {
-        dispatch({ type: TaskConstants.SET_TASK, payload: task })
+        setSingleTask(task)
     }
 
     return (

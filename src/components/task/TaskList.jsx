@@ -1,26 +1,16 @@
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import TaskItem from './TaskItem'
-import TaskContext from '../../context/task/TaskContext'
-import SpinnerContext from '../../context/spinner/SpinnerContext'
-import TaskConstants from '../../context/task/TaskConstants'
-import TaskActions from '../../context/task/TaskActions'
+import TaskService from '../../services/task/TaskService'
 
-const TaskList = () => {
-
-    const { tasks, dispatch } = useContext(TaskContext)
-    const { setLoading } = useContext(SpinnerContext)
-
+const TaskList = ({ tasks, getAll, remove, setSingleTask, setLoading }) => {
     useEffect(() => {
         const getTasks = async () => {
             try {
                 setLoading(true)
 
-                const data = await TaskActions.getAll()
+                const data = await TaskService.getAll()
 
-                dispatch({
-                    type: TaskConstants.GET_ALL,
-                    payload: data
-                })
+                getAll(data)
 
             } catch (error) {
                 window.alert(`Error Occurred: ${error.message}`)
@@ -31,12 +21,12 @@ const TaskList = () => {
 
         getTasks()
 
-    }, [dispatch, setLoading])
+    }, [])
 
     return (
         <div className='card-holder'>
             {tasks.map(task => (
-                <TaskItem key={task._id} task={task} />
+                <TaskItem key={task._id} task={task} remove={remove} setSingleTask={setSingleTask} setLoading={setLoading} />
             ))}
         </div>
     )

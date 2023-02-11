@@ -1,21 +1,16 @@
-import { useState, useContext, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import Button from '../shared/Button'
-import TaskContext from '../../context/task/TaskContext'
-import TaskConstants from '../../context/task/TaskConstants'
-import SpinnerContext from '../../context/spinner/SpinnerContext'
-import TaskActions from '../../context/task/TaskActions'
+import TaskService from '../../services/task/TaskService'
 
-const TaskForm = () => {
+const TaskForm = ({ task, add, update, setLoading }) => {
 
     const [title, setTitle] = useState('')
-    const { task, dispatch } = useContext(TaskContext)
-    const { setLoading } = useContext(SpinnerContext)
 
     useEffect(() => {
         if (task) {
             setTitle(task.title)
-        }        
+        }
     }, [task])
 
     const handleTitleChange = (e) => setTitle(e.target.value)
@@ -32,14 +27,14 @@ const TaskForm = () => {
 
             if (task) {
                 const dto = { ...task, title }
-                const updatedTask = await TaskActions.update(task._id, dto)
+                const updatedTask = await TaskService.update(task._id, dto)
 
-                dispatch({ type: TaskConstants.UPDATE, payload: updatedTask })
+                update(updatedTask);
             } else {
                 const dto = { title };
-                const newTask = await TaskActions.add(dto)
+                const newTask = await TaskService.add(dto)
 
-                dispatch({ type: TaskConstants.ADD, payload: newTask })
+                add(newTask);
             }
 
         } catch (error) {

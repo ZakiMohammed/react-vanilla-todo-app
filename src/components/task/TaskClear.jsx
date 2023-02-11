@@ -1,27 +1,19 @@
-import { useContext } from 'react'
 import { FaTrashAlt } from 'react-icons/fa'
 import Button from '../shared/Button'
-import TaskContext from '../../context/task/TaskContext'
-import SpinnerContext from '../../context/spinner/SpinnerContext'
-import TaskActions from '../../context/task/TaskActions'
-import TaskConstants from '../../context/task/TaskConstants'
+import TaskService from '../../services/task/TaskService'
 
-const TaskClear = () => {
-
-    const { tasks, dispatch } = useContext(TaskContext)
-    const { loading, setLoading } = useContext(SpinnerContext)
-
+const TaskClear = ({ tasks, removeAll, loading, setLoading }) => {
+    
     const handleRemoveTask = async (e) => {
         try {
             if (!window.confirm('Are you sure you want to remove all the tasks?')) {
                 return;
             }
-
             setLoading(true)
 
-            await TaskActions.removeAll()
+            await TaskService.removeAll()
 
-            dispatch({ type: TaskConstants.REMOVE_ALL })
+            removeAll();
 
         } catch (error) {
             window.alert(`Error Occurred: ${error.message}`)
